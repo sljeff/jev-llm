@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jev-LLM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Schibsted+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Jev<em>-LLM</em></h1>
+  </header>
+
+  <section id="layout">
+    <section id="chat" aria-live="polite"></section>
+
+    <aside id="decision">
+      <div class="d-title" id="dTitle"><i class="dot"></i>Jev deciding</div>
+
+      <div class="layer" id="layer1">
+        <div class="layer-head">
+          <span class="badge">Layer 1</span> part of speech
+          <span class="picked" id="pickedPos"></span>
+        </div>
+        <div id="posBars" class="bars"><div class="placeholder">Waiting for input…</div></div>
+      </div>
+
+      <div class="layer" id="layer2">
+        <div class="layer-head">
+          <span class="badge">Layer 2</span> first letter
+          <span class="picked" id="pickedLetter"></span>
+        </div>
+        <div id="letterBars" class="bars"><div class="placeholder">Waiting for input…</div></div>
+      </div>
+
+      <div class="layer" id="layer3">
+        <div class="layer-head">
+          <span class="badge">Layer 3</span> the word
+          <span class="picked" id="pickedWord"></span>
+        </div>
+        <div id="wordBars" class="bars"><div class="placeholder">Waiting for input…</div></div>
+      </div>
+    </aside>
+  </section>
+
+  <form id="composer" autocomplete="off">
+    <input id="msg" type="text" placeholder="Who are you?" autofocus>
+    <button id="send" type="submit">Send</button>
+  </form>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+/* jev-llm — 浅色纸感编辑风。暖白纸底 / 墨色 / 绿 + 铁锈红双强调。
+   中性色向纸的暖色调（hue 90）轻倾斜, 概率条实色不发光。 */
+:root {
+  --paper: oklch(97% 0.006 90);        /* 页面底 */
+  --card: oklch(99% 0.004 90);         /* 决策面板 */
+  --well: oklch(94.5% 0.008 90);       /* 气泡/概率条轨道 */
+  --ink: oklch(27% 0.012 90);          /* 正文墨色 */
+  --ink-mid: oklch(46% 0.012 90);
+  --ink-faint: oklch(64% 0.009 90);
+  --line: oklch(85% 0.01 90);
+  --green: oklch(50% 0.11 155);        /* 强调一: 决策点 / 第一层 */
+  --green-soft: oklch(91% 0.045 155);
+  --rust: oklch(50% 0.115 45);         /* 强调二: 第二层 */
+  --rust-soft: oklch(92% 0.035 50);
+  --serif: "Spectral", Georgia, "Songti SC", serif;
+  --sans: "Schibsted Grotesk", -apple-system, "PingFang SC", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.6 var(--sans);
+}
+
+main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 22px 22px 18px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 顶栏 ─────────────────────────────── */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 14px; border-bottom: 1px solid var(--line);
+}
+h1 {
+  margin: 0; font: 600 30px/1.2 var(--serif); letter-spacing: -0.3px;
+}
+h1 em { font-style: normal; color: var(--green); }
+
+/* ── 左右分屏 ─────────────────────────── */
+#layout {
+  flex: 1; min-height: 0;
+  display: grid; grid-template-columns: 11fr 9fr; gap: 20px;
+  padding-top: 16px;
+}
+@media (max-width: 900px) { #layout { grid-template-columns: 1fr; } #decision { display: none; } }
+
+/* ── 左:聊天(衬线大字, 像打印的对话记录) ── */
+#chat {
+  overflow-y: auto; display: flex; flex-direction: column; gap: 14px;
+  padding: 6px 4px 12px;
+}
+.msg {
+  max-width: 86%; padding: 12px 18px; border-radius: 14px;
+  font: 400 21px/1.55 var(--serif);
+  white-space: pre-wrap; word-break: break-word;
+}
+.msg.user {
+  align-self: flex-end;
+  background: var(--ink); color: var(--paper);
+  border-bottom-right-radius: 4px;
+}
+.msg.jev {
+  align-self: flex-start;
+  background: transparent; border: 1px solid var(--line);
+  border-bottom-left-radius: 4px;
+}
+.msg.jev.done { color: var(--ink-mid); background: var(--well); border-color: transparent; }
+.msg .cursor {
+  display: inline-block; width: 3px; height: 1em;
+  background: var(--green); vertical-align: text-bottom; margin-left: 2px;
+  animation: pulse 1.1s steps(1) infinite;
+}
+.msg .note { display: block; margin-top: 5px; font: 400 14px/1.4 var(--sans); color: var(--rust); }
+.msg.error { align-self: center; font: 400 14px/1.5 var(--sans); color: var(--rust); }
+
+/* ── 右:决策面板 ──────────────────────── */
+#decision {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 18px; display: flex; flex-direction: column; gap: 20px;
+  overflow-y: auto;
+}
+.d-title {
+  font: 500 16px/1.4 var(--sans);
+  display: flex; align-items: center; gap: 9px;
+}
+.d-title .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--line); transition: background .3s;
+}
+.d-title.thinking .dot { background: var(--green); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .2; } }
+
+.layer { display: flex; flex-direction: column; gap: 9px; }
+.layer-head {
+  font: 500 13.5px/1.4 var(--sans); color: var(--ink-mid);
+  display: flex; align-items: center; gap: 8px;
+}
+.badge {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px;
+  padding: 2px 9px; border-radius: 999px;
+}
+#layer1 .badge { background: var(--green-soft); color: var(--green); }
+#layer2 .badge { background: var(--rust-soft); color: var(--rust); }
+#layer3 .badge { background: var(--well); color: var(--ink); }
+.picked { font-weight: 700; color: var(--green); }
+#layer2 .picked { color: var(--rust); }
+#layer3 .picked { color: var(--ink); }
+
+/* 概率条: 实色填充, 胜者加深, 不发光 */
+.bars { display: flex; flex-direction: column; gap: 6px; }
+.placeholder { color: var(--ink-faint); font-size: 13.5px; padding: 4px 0; }
+.bar-row {
+  display: grid; grid-template-columns: 100px 1fr 44px;
+  gap: 10px; align-items: center;
+  font: 500 14px/1.4 var(--sans);
+  font-variant-numeric: tabular-nums;
+}
+.bar-row .label {
+  color: var(--ink-mid); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.bar-row .bar { height: 13px; background: var(--well); border-radius: 6px; overflow: hidden; }
+.bar-row .bar i {
+  display: block; height: 100%; border-radius: 6px;
+  transition: width .35s ease;
+}
+#layer1 .bar-row .bar i { background: var(--green-soft); }
+#layer2 .bar-row .bar i { background: var(--rust-soft); }
+#layer3 .bar-row .bar i { background: var(--well); }
+#layer1 .bar-row.winner .bar i { background: var(--green); }
+#layer2 .bar-row.winner .bar i { background: var(--rust); }
+#layer3 .bar-row.winner .bar i { background: var(--ink); }
+.bar-row .pct { color: var(--ink-faint); font-size: 12.5px; text-align: right; }
+.bar-row.winner .label { color: var(--ink); font-weight: 700; }
+.bar-row.winner .pct { color: var(--ink); font-weight: 700; }
+
+/* ── 输入区 ───────────────────────────── */
+#composer { display: flex; gap: 10px; padding-top: 14px; }
+#msg {
+  flex: 1; padding: 13px 18px; font: 400 17px/1.4 var(--sans);
+  border: 1px solid var(--line); border-radius: 10px; outline: none;
+  background: var(--card); color: var(--ink); transition: border-color .2s;
+}
+#msg:focus { border-color: var(--ink-mid); }
+#msg:disabled, #send:disabled { opacity: .45; cursor: not-allowed; }
+#send {
+  padding: 0 30px; font: 700 16px/1 var(--sans); letter-spacing: 2px;
+  color: var(--paper); background: var(--ink);
+  border: 0; border-radius: 10px; cursor: pointer;
+}
+#send:not(:disabled):hover { background: var(--ink-mid); }
